@@ -1,0 +1,452 @@
+from pathlib import Path
+import zipfile
+
+root = Path("/mnt/data/coldme-rebuilt")
+root.mkdir(exist_ok=True)
+
+html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="COLDME — for the things I couldn't say.">
+  <title>COLDME — For the things I couldn't say.</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="#home">COLDME</a>
+    <nav>
+      <a href="#letters">Letters</a>
+      <a href="#journey">Journey</a>
+      <a href="#memories">Memories</a>
+      <a href="#someday">Someday</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-inner">
+        <p class="kicker">A place between then and someday</p>
+        <h1>For the things<br><em>I couldn't say.</em></h1>
+        <p class="lead">
+          We didn't stop caring. We just reached a part of life where
+          there were things bigger than us to choose.
+        </p>
+        <a class="quiet-link" href="#letters">Read quietly ↓</a>
+      </div>
+    </section>
+
+    <section class="opening">
+      <p class="small-label">01 / WHY THIS EXISTS</p>
+      <div class="opening-text">
+        <p>Maybe we weren't wrong for each other.</p>
+        <p>Maybe we were simply meeting at the wrong time.</p>
+        <p class="soft">So this isn't a place to wait.</p>
+        <p class="soft">It's a place to remember, to grow, and to keep moving.</p>
+      </div>
+    </section>
+
+    <section id="letters">
+      <div class="section-title">
+        <span>02</span>
+        <h2>Letters</h2>
+      </div>
+      <p class="section-note">Things I wanted to tell you, even when I didn't know how.</p>
+
+      <article class="letter">
+        <div class="meta">04 / 09 / 2026 · LETTER 001</div>
+        <h3>To you, wherever life has taken you.</h3>
+        <p>
+          I don't know where you are in your journey right now, and I don't
+          want to interrupt it. I just hope you're doing okay, learning,
+          growing, and becoming the person you want to be.
+        </p>
+        <p>
+          I'm doing the same. There are days when I still think about us,
+          but I'm learning that loving someone doesn't always mean holding
+          onto them. Sometimes it means letting both people become who they
+          need to become.
+        </p>
+        <p>— Me, still moving forward.</p>
+      </article>
+
+      <article class="letter">
+        <div class="meta">ADD YOUR DATE · LETTER 002</div>
+        <h3>Write this one yourself.</h3>
+        <p>
+          This is where your next letter can live. You can write about
+          something you wish you had said, something you learned, or simply
+          something you hope she is doing someday.
+        </p>
+      </article>
+    </section>
+
+    <section id="journey">
+      <div class="section-title">
+        <span>03</span>
+        <h2>Journey</h2>
+      </div>
+      <p class="section-note">The life I'm building while we're apart.</p>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <span>NOW</span>
+          <div>
+            <h3>Keep going.</h3>
+            <p>School. Family. Responsibility. Dreams. The ordinary days that slowly become a life.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span>NEXT</span>
+          <div>
+            <h3>Become someone I'm proud of.</h3>
+            <p>Not for a reunion. Not to prove anything. Just because I want to grow.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <span>ONE DAY</span>
+          <div>
+            <h3>Maybe our paths cross again.</h3>
+            <p>If they do, I hope we meet as two people who lived fully—not as two people who stayed stuck in the past.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="memories">
+      <div class="section-title">
+        <span>04</span>
+        <h2>Memories</h2>
+      </div>
+      <p class="section-note">The moments worth keeping, without trying to live in them.</p>
+
+      <div class="memory-grid">
+        <div class="memory-card"><span>01</span><p>Our favorite memory.</p></div>
+        <div class="memory-card"><span>02</span><p>A place we went.</p></div>
+        <div class="memory-card"><span>03</span><p>Something only we understood.</p></div>
+      </div>
+    </section>
+
+    <section id="someday" class="someday">
+      <p class="small-label">05 / SOMEDAY</p>
+      <h2>If life brings us back...</h2>
+      <p>
+        I hope it isn't because we spent our lives waiting.
+        I hope it's because we both lived, grew, found ourselves,
+        and somehow found our way back.
+      </p>
+      <div class="promise">
+        <span>THE PROMISE</span>
+        <p>“When the time comes, we'll find each other.”</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>COLDME</strong>
+      <p>For the things I couldn't say.</p>
+    </div>
+    <p class="footer-note">No pressure. No expectations.<br>Just a place to leave a few words.</p>
+  </footer>
+</body>
+</html>
+"""
+
+css = """@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f4f1ea;
+  --ink: #181817;
+  --muted: #77736b;
+  --line: #d8d3c8;
+  --soft: #a19b90;
+  --max: 960px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Manrope", sans-serif;
+  line-height: 1.75;
+}
+
+.header {
+  width: min(var(--max), calc(100% - 44px));
+  margin: auto;
+  padding: 27px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: .24em;
+}
+
+nav { display: flex; gap: 26px; }
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+nav a:hover { color: var(--ink); }
+
+main { width: min(var(--max), calc(100% - 44px)); margin: auto; }
+
+.hero {
+  min-height: 91vh;
+  display: grid;
+  place-items: center start;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-inner { padding: 100px 0; }
+
+.kicker, .small-label, .meta, .timeline-item > span, .promise > span {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero h1 {
+  font-size: clamp(52px, 10vw, 105px);
+  line-height: .92;
+  letter-spacing: -.065em;
+  margin: 24px 0 30px;
+  font-weight: 800;
+}
+
+.hero h1 em {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.055em;
+}
+
+.lead {
+  max-width: 590px;
+  font-size: 18px;
+  color: #59564f;
+}
+
+.quiet-link {
+  display: inline-block;
+  margin-top: 35px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 13px;
+  border-bottom: 1px solid var(--ink);
+}
+
+.opening, section:not(.hero) { padding: 115px 0; }
+
+.opening {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 60px;
+  border-bottom: 1px solid var(--line);
+}
+
+.opening-text {
+  max-width: 650px;
+  font-family: Georgia, serif;
+  font-size: clamp(25px, 4vw, 38px);
+  line-height: 1.35;
+  letter-spacing: -.025em;
+}
+
+.opening-text p { margin: 0 0 12px; }
+.opening-text .soft { color: var(--soft); }
+
+.section-title {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+}
+
+.section-title span {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: -.04em;
+}
+
+.section-note {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 15px 0 55px;
+}
+
+.letter {
+  max-width: 720px;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.letter h3 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(27px, 4vw, 40px);
+  line-height: 1.15;
+  letter-spacing: -.03em;
+  margin: 16px 0 25px;
+}
+
+.letter p { color: #56534d; max-width: 650px; }
+.letter p:last-child { color: var(--ink); font-family: Georgia, serif; font-style: italic; margin-top: 30px; }
+
+.timeline { border-top: 1px solid var(--line); }
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 40px;
+  padding: 34px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.timeline-item h3 { margin: 0 0 5px; font-size: 22px; }
+.timeline-item p { margin: 0; color: var(--muted); max-width: 600px; font-size: 14px; }
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.memory-card {
+  min-height: 240px;
+  border: 1px solid var(--line);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.memory-card span {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.memory-card p { margin: 0; font-family: Georgia, serif; font-size: 22px; }
+
+.someday {
+  border-top: 1px solid var(--line);
+  text-align: center;
+  padding-left: 12%;
+  padding-right: 12%;
+}
+
+.someday h2 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(42px, 7vw, 72px);
+  line-height: 1;
+  letter-spacing: -.05em;
+  margin: 30px 0;
+}
+
+.someday > p:not(.small-label) {
+  max-width: 610px;
+  margin: auto;
+  color: var(--muted);
+}
+
+.promise {
+  margin: 70px auto 0;
+  padding: 35px;
+  border: 1px solid var(--line);
+  max-width: 620px;
+}
+
+.promise p {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  margin: 12px 0 0;
+}
+
+footer {
+  width: min(var(--max), calc(100% - 44px));
+  margin: auto;
+  padding: 38px 0 55px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+footer strong { color: var(--ink); letter-spacing: .2em; }
+footer p { margin: 5px 0 0; }
+.footer-note { text-align: right; }
+
+@media (max-width: 650px) {
+  .header { padding: 22px 0; }
+  nav { gap: 13px; }
+  nav a:nth-child(n+3) { display: none; }
+  .hero { min-height: 82vh; }
+  .opening { grid-template-columns: 1fr; gap: 25px; padding: 80px 0; }
+  section:not(.hero) { padding: 80px 0; }
+  .memory-grid { grid-template-columns: 1fr; }
+  .memory-card { min-height: 180px; }
+  .timeline-item { grid-template-columns: 80px 1fr; gap: 20px; }
+  .someday { padding-left: 0; padding-right: 0; }
+  footer { flex-direction: column; }
+  .footer-note { text-align: left; }
+}
+"""
+
+readme = """# COLDME
+
+A minimalist personal website built around a simple idea:
+a quiet place for letters, memories, growth, and the possibility of someday.
+
+## Edit the site
+Open `index.html` and edit the text inside the sections:
+- Letters
+- Journey
+- Memories
+- Someday
+
+The design is controlled by `style.css`.
+
+## Publish for free
+This is a static website and can be hosted free with GitHub Pages.
+"""
+
+(root / "index.html").write_text(html, encoding="utf-8")
+(root / "style.css").write_text(css, encoding="utf-8")
+(root / "README.md").write_text(readme, encoding="utf-8")
+
+zip_path = Path("/mnt/data/COLDME-rebuilt-website.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    for f in root.iterdir():
+        z.write(f, f.name)
+
+print(zip_path)

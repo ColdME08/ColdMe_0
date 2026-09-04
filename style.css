@@ -1,0 +1,163 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f5f3ee;
+  --text: #171717;
+  --muted: #77736c;
+  --line: #d8d4cb;
+  --max: 900px;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Manrope", sans-serif;
+  line-height: 1.7;
+}
+
+.site-header {
+  width: min(var(--max), calc(100% - 40px));
+  margin: 0 auto;
+  padding: 28px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .16em;
+}
+
+nav { display: flex; gap: 24px; }
+
+nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+nav a:hover, .logo:hover { color: #000; }
+
+main {
+  width: min(var(--max), calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.hero {
+  min-height: 76vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.eyebrow, .date, .section-heading span {
+  font-family: "DM Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.hero h1 {
+  max-width: 720px;
+  margin: 14px 0 22px;
+  font-size: clamp(48px, 9vw, 92px);
+  line-height: .98;
+  letter-spacing: -.06em;
+}
+
+.intro {
+  max-width: 570px;
+  color: #57534d;
+  font-size: 18px;
+}
+
+.scroll-link {
+  width: fit-content;
+  margin-top: 38px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--text);
+  padding-bottom: 4px;
+  font-size: 14px;
+}
+
+.thoughts, .about {
+  padding: 100px 0;
+}
+
+.section-heading {
+  display: flex;
+  gap: 20px;
+  align-items: baseline;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+  margin-bottom: 10px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -.03em;
+}
+
+.thought {
+  padding: 46px 0;
+  border-bottom: 1px solid var(--line);
+  max-width: 720px;
+}
+
+.thought .date { margin: 0 0 12px; }
+
+.thought h3 {
+  margin: 0 0 14px;
+  font-size: clamp(24px, 4vw, 34px);
+  line-height: 1.2;
+  letter-spacing: -.035em;
+}
+
+.thought p:last-child, .about p {
+  color: #57534d;
+  max-width: 650px;
+}
+
+.about {
+  border-bottom: 1px solid var(--line);
+}
+
+.about p {
+  font-size: 18px;
+}
+
+.muted { color: var(--muted) !important; font-size: 14px !important; }
+
+footer {
+  width: min(var(--max), calc(100% - 40px));
+  margin: 0 auto;
+  padding: 34px 0 50px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--muted);
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .site-header { padding: 22px 0; }
+  nav { gap: 14px; }
+  .hero { min-height: 70vh; padding: 60px 0; }
+  .thoughts, .about { padding: 70px 0; }
+  footer { flex-direction: column; gap: 4px; }
+}
