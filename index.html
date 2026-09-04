@@ -149,56 +149,7 @@
 </html>
 """
 
-css = """@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
 
-:root {
-  --bg: #f4f1ea;
-  --ink: #181817;
-  --muted: #77736b;
-  --line: #d8d3c8;
-  --soft: #a19b90;
-  --max: 960px;
-}
-
-* { box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: "Manrope", sans-serif;
-  line-height: 1.75;
-}
-
-.header {
-  width: min(var(--max), calc(100% - 44px));
-  margin: auto;
-  padding: 27px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-}
-
-.brand {
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: .24em;
-}
-
-nav { display: flex; gap: 26px; }
-
-nav a {
-  color: var(--muted);
-  text-decoration: none;
-  font-family: "DM Mono", monospace;
-  font-size: 11px;
-  text-transform: uppercase;
-}
 
 nav a:hover { color: var(--ink); }
 
