@@ -29,20 +29,28 @@ async function checkLogin() {
 // LOAD POSTS
 async function loadPosts() {
 
-  const postsList = document.getElementById("posts-list");
+  const postsList =
+    document.getElementById("posts-list");
 
-  postsList.innerHTML = "<p>Loading posts...</p>";
+  postsList.innerHTML =
+    "<p>Loading posts...</p>";
 
-  const { data, error } = await supabaseClient
-    .from("posts")
-    .select("*")
-    .order("created_at", {
-      ascending: false
-    });
+
+  const { data, error } =
+    await supabaseClient
+      .from("posts")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
+
 
   if (error) {
 
-    console.error("POST LOAD ERROR:", error);
+    console.error(
+      "POST LOAD ERROR:",
+      error
+    );
 
     postsList.innerHTML = `
       <p>Unable to load posts.</p>
@@ -65,7 +73,8 @@ async function loadPosts() {
 
   postsList.innerHTML = data.map(post => {
 
-    const date = new Date(post.created_at);
+    const date =
+      new Date(post.created_at);
 
     return `
       <article class="admin-post">
@@ -86,6 +95,7 @@ async function loadPosts() {
 
         </div>
 
+
         <div class="admin-post-actions">
 
           <button
@@ -93,6 +103,15 @@ async function loadPosts() {
             class="edit-button"
             data-id="${post.id}">
             EDIT
+          </button>
+
+
+          <button
+            type="button"
+            class="delete-button"
+            data-id="${post.id}"
+            data-title="${post.title || "Untitled"}">
+            DELETE
           </button>
 
         </div>
@@ -104,19 +123,97 @@ async function loadPosts() {
 
 
   // EDIT BUTTONS
+
   document
     .querySelectorAll(".edit-button")
     .forEach(button => {
 
-      button.addEventListener("click", () => {
+      button.addEventListener(
+        "click",
+        () => {
 
-        const id =
-          button.getAttribute("data-id");
+          const id =
+            button.getAttribute("data-id");
 
-        window.location.href =
-          "edit-post.html?id=" + id;
+          window.location.href =
+            "edit-post.html?id=" + id;
 
-      });
+        }
+      );
+
+    });
+
+
+  // DELETE BUTTONS
+
+  document
+    .querySelectorAll(".delete-button")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          const id =
+            button.getAttribute("data-id");
+
+          const title =
+            button.getAttribute("data-title");
+
+
+          const confirmed =
+            confirm(
+              'Delete "' +
+              title +
+              '"?\n\nThis cannot be undone.'
+            );
+
+
+          if (!confirmed) {
+            return;
+          }
+
+
+          button.disabled = true;
+
+          button.textContent =
+            "DELETING...";
+
+
+          const { error } =
+            await supabaseClient
+              .from("posts")
+              .delete()
+              .eq("id", id);
+
+
+          if (error) {
+
+            console.error(
+              "DELETE ERROR:",
+              error
+            );
+
+            alert(
+              "Unable to delete:\n" +
+              error.message
+            );
+
+            button.disabled = false;
+
+            button.textContent =
+              "DELETE";
+
+            return;
+          }
+
+
+          // Reload dashboard
+
+          await loadPosts();
+
+        }
+      );
 
     });
 
@@ -124,33 +221,43 @@ async function loadPosts() {
 
 
 // NEW POST
+
 document
   .getElementById("new-post-btn")
-  .addEventListener("click", () => {
+  .addEventListener(
+    "click",
+    () => {
 
-    window.location.href =
-      "new-post.html";
+      window.location.href =
+        "new-post.html";
 
-  });
+    }
+  );
 
 
 // LOG OUT
+
 document
   .getElementById("logout-btn")
-  .addEventListener("click", async () => {
+  .addEventListener(
+    "click",
+    async () => {
 
-    await supabaseClient.auth.signOut();
+      await supabaseClient.auth.signOut();
 
-    window.location.href =
-      "admin.html";
+      window.location.href =
+        "admin.html";
 
-  });
+    }
+  );
 
 
 // START
+
 async function startDashboard() {
 
-  const loggedIn = await checkLogin();
+  const loggedIn =
+    await checkLogin();
 
   if (!loggedIn) {
     return;
