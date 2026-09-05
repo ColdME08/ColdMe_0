@@ -9,10 +9,7 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-// ===============================
 // CHECK LOGIN
-// ===============================
-
 async function checkLogin() {
 
   const {
@@ -29,27 +26,19 @@ async function checkLogin() {
 }
 
 
-// ===============================
 // LOAD POSTS
-// ===============================
-
 async function loadPosts() {
 
-  const postsList =
-    document.getElementById("posts-list");
+  const postsList = document.getElementById("posts-list");
 
-  postsList.innerHTML =
-    "<p>Loading posts...</p>";
+  postsList.innerHTML = "<p>Loading posts...</p>";
 
-
-  const { data, error } =
-    await supabaseClient
-      .from("posts")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
-
+  const { data, error } = await supabaseClient
+    .from("posts")
+    .select("*")
+    .order("created_at", {
+      ascending: false
+    });
 
   if (error) {
 
@@ -76,8 +65,7 @@ async function loadPosts() {
 
   postsList.innerHTML = data.map(post => {
 
-    const date =
-      new Date(post.created_at);
+    const date = new Date(post.created_at);
 
     return `
       <article class="admin-post">
@@ -101,6 +89,7 @@ async function loadPosts() {
         <div class="admin-post-actions">
 
           <button
+            type="button"
             class="edit-button"
             data-id="${post.id}">
             EDIT
@@ -114,18 +103,18 @@ async function loadPosts() {
   }).join("");
 
 
-  // Add EDIT button actions
+  // EDIT BUTTONS
   document
     .querySelectorAll(".edit-button")
     .forEach(button => {
 
       button.addEventListener("click", () => {
 
-        const postId =
+        const id =
           button.getAttribute("data-id");
 
         window.location.href =
-          "edit-post.html?id=" + postId;
+          "edit-post.html?id=" + id;
 
       });
 
@@ -134,10 +123,7 @@ async function loadPosts() {
 }
 
 
-// ===============================
 // NEW POST
-// ===============================
-
 document
   .getElementById("new-post-btn")
   .addEventListener("click", () => {
@@ -148,10 +134,7 @@ document
   });
 
 
-// ===============================
 // LOG OUT
-// ===============================
-
 document
   .getElementById("logout-btn")
   .addEventListener("click", async () => {
@@ -164,14 +147,10 @@ document
   });
 
 
-// ===============================
 // START
-// ===============================
-
 async function startDashboard() {
 
-  const loggedIn =
-    await checkLogin();
+  const loggedIn = await checkLogin();
 
   if (!loggedIn) {
     return;
