@@ -35,16 +35,17 @@ async function loadLetters() {
 
   if (error) {
 
-    console.error(
-      "LETTER ERROR:",
-      error
-    );
+  console.error("LETTER ERROR:", error);
 
-    container.innerHTML =
-      "<p>Unable to load letters.</p>";
+  container.innerHTML = `
+    <p>Unable to load letters.</p>
+    <p style="font-size: 12px;">
+      ${error.message}
+    </p>
+  `;
 
-    return;
-  }
+  return;
+}
 
 
   if (!data || data.length === 0) {
