@@ -21,9 +21,7 @@ async function checkLogin() {
   } = await supabaseClient.auth.getSession();
 
   if (error || !session) {
-
     window.location.href = "admin.html";
-
     return false;
   }
 
@@ -36,7 +34,6 @@ async function checkLogin() {
 // ===============================
 
 const postForm = document.getElementById("post-form");
-
 const postMessage = document.getElementById("post-message");
 
 
@@ -61,7 +58,6 @@ postForm.addEventListener("submit", async (event) => {
 
   event.preventDefault();
 
-
   const type =
     document.getElementById("post-type").value;
 
@@ -85,23 +81,7 @@ postForm.addEventListener("submit", async (event) => {
     "Publishing...";
 
 
-  // Get current logged-in user
-  const {
-    data: { user },
-    error: userError
-  } = await supabaseClient.auth.getUser();
-
-
-  if (userError || !user) {
-
-    postMessage.textContent =
-      "You are not logged in.";
-
-    return;
-  }
-
-
-  // Save post
+  // Save post to Supabase
   const { error } =
     await supabaseClient
       .from("posts")
@@ -109,8 +89,7 @@ postForm.addEventListener("submit", async (event) => {
         {
           title: title,
           content: content,
-          type: type,
-          user_id: user.id
+          type: type
         }
       ]);
 
@@ -128,10 +107,9 @@ postForm.addEventListener("submit", async (event) => {
 
   // Success
   postMessage.textContent =
-    "Published successfully.";
+    "Published successfully!";
 
 
-  // Go back to dashboard
   setTimeout(() => {
 
     window.location.href =
