@@ -10,23 +10,25 @@ const supabaseClient = window.supabase.createClient(
 
 
 // ===============================
-// BUTTONS
+// CHECK LOGIN
 // ===============================
 
-document.getElementById("logout-btn").addEventListener("click", async () => {
+async function checkLogin() {
 
-  await supabaseClient.auth.signOut();
+  const {
+    data: { session },
+    error
+  } = await supabaseClient.auth.getSession();
 
-  window.location.href = "admin.html";
+  if (error || !session) {
 
-});
+    window.location.href = "admin.html";
 
+    return false;
+  }
 
-document.getElementById("new-post-btn").addEventListener("click", () => {
-
-  alert("New Post is coming next.");
-
-});
+  return true;
+}
 
 
 // ===============================
@@ -35,114 +37,122 @@ document.getElementById("new-post-btn").addEventListener("click", () => {
 
 async function loadPosts() {
 
-  const postsList = document.getElementById("posts-list");
+  const postsList =
+    document.getElementById("posts-list");
 
-  postsList.innerHTML = "<p>Loading posts...</p>";
+  postsList.innerHTML =
+    "<p>Loading posts...</p>";
 
-  try {
 
-    const result = await supabaseClient
+  const { data, error } =
+    await supabaseClient
       .from("posts")
       .select("*")
       .order("created_at", {
         ascending: false
       });
 
-    console.log("Supabase result:", result);
 
-    if (result.error) {
+  if (error) {
 
-      console.error("Supabase error:", result.error);
-
-      postsList.innerHTML = `
-        <p>Unable to load posts.</p>
-        <p>${result.error.message}</p>
-      `;
-
-      return;
-    }
-
-    const posts = result.data;
-
-    if (!posts || posts.length === 0) {
-
-      postsList.innerHTML = `
-        <p>No posts yet.</p>
-      `;
-
-      return;
-    }
-
-    postsList.innerHTML = posts.map(post => {
-
-      const date = new Date(post.created_at);
-
-      return `
-        <article class="admin-post">
-
-          <div>
-
-            <p class="admin-post-type">
-              ${post.type || "POST"}
-            </p>
-
-            <h3>
-              ${post.title || "Untitled"}
-            </h3>
-
-            <p class="admin-post-date">
-              ${date.toLocaleDateString()}
-            </p>
-
-          </div>
-
-        </article>
-      `;
-
-    }).join("");
-
-  } catch (error) {
-
-    console.error("Dashboard error:", error);
+    console.error("POST LOAD ERROR:", error);
 
     postsList.innerHTML = `
-      <p>Dashboard error:</p>
+      <p>Unable to load posts.</p>
       <p>${error.message}</p>
     `;
 
+    return;
   }
+
+
+  if (!data || data.length === 0) {
+
+    postsList.innerHTML = `
+      <p>No posts yet.</p>
+    `;
+
+    return;
+  }
+
+
+  postsList.innerHTML = data.map(post => {
+
+    const date =
+      new Date(post.created_at);
+
+    return `
+      <article class="admin-post">
+
+        <div>
+
+          <p class="admin-post-type">
+            ${post.type || "POST"}
+          </p>
+
+          <h3>
+            ${post.title || "Untitled"}
+          </h3>
+
+          <p class="admin-post-date">
+            ${date.toLocaleDateString()}
+          </p>
+
+        </div>
+
+      </article>
+    `;
+
+  }).join("");
 
 }
 
 
 // ===============================
-// CHECK LOGIN
+// NEW POST
+// ===============================
+
+document
+  .getElementById("new-post-btn")
+  .addEventListener("click", () => {
+
+    window.location.href =
+      "new-post.html";
+
+  });
+
+
+// ===============================
+// LOG OUT
+// ===============================
+
+document
+  .getElementById("logout-btn")
+  .addEventListener("click", async () => {
+
+    await supabaseClient.auth.signOut();
+
+    window.location.href =
+      "admin.html";
+
+  });
+
+
+// ===============================
+// START
 // ===============================
 
 async function startDashboard() {
 
-  const { data, error } =
-    await supabaseClient.auth.getSession();
+  const loggedIn =
+    await checkLogin();
 
-  console.log("Session:", data);
-
-  if (error) {
-
-    console.error("Session error:", error);
-
+  if (!loggedIn) {
     return;
   }
 
-  if (!data.session) {
-
-    window.location.href = "admin.html";
-
-    return;
-  }
-
-  loadPosts();
+  await loadPosts();
 
 }
-
 
 startDashboard();
