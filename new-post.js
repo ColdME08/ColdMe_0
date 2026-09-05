@@ -9,10 +9,7 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-// ===============================
 // CHECK LOGIN
-// ===============================
-
 async function checkLogin() {
 
   const {
@@ -29,34 +26,33 @@ async function checkLogin() {
 }
 
 
-// ===============================
-// FORM
-// ===============================
+// ELEMENTS
+const postForm =
+  document.getElementById("post-form");
 
-const postForm = document.getElementById("post-form");
-const postMessage = document.getElementById("post-message");
+const postMessage =
+  document.getElementById("post-message");
+
+const imageInput =
+  document.getElementById("post-image");
 
 
-// ===============================
 // CANCEL
-// ===============================
-
 document
   .getElementById("cancel-btn")
   .addEventListener("click", () => {
 
-    window.location.href = "admin-dashboard.html";
+    window.location.href =
+      "admin-dashboard.html";
 
   });
 
 
-// ===============================
 // PUBLISH
-// ===============================
-
 postForm.addEventListener("submit", async (event) => {
 
   event.preventDefault();
+
 
   const type =
     document.getElementById("post-type").value;
@@ -66,6 +62,9 @@ postForm.addEventListener("submit", async (event) => {
 
   const content =
     document.getElementById("post-content").value.trim();
+
+  const imageFile =
+    imageInput.files[0];
 
 
   if (!type || !title || !content) {
@@ -81,7 +80,85 @@ postForm.addEventListener("submit", async (event) => {
     "Publishing...";
 
 
-  // Save post to Supabase
+  let imageUrl = null;
+
+
+  // UPLOAD PHOTO
+  if (imageFile) {
+
+    postMessage.textContent =
+      "Uploading photo...";
+
+
+    const fileExtension =
+      imageFile.name.split(".").pop();
+
+    const fileName =
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .substring(2) +
+      "." +
+      fileExtension;
+
+
+    const filePath =
+      fileName;
+
+
+    const { error: uploadError } =
+      await supabaseClient
+        .storage
+        .from("coldme-photos")
+        .upload(
+          filePath,
+          imageFile,
+          {
+            cacheControl: "3600",
+            upsert: false
+          }
+        );
+
+
+    if (uploadError) {
+
+      console.error(
+        "UPLOAD ERROR:",
+        uploadError
+      );
+
+      postMessage.textContent =
+        "Unable to upload photo: " +
+        uploadError.message;
+
+      return;
+    }
+
+
+    // GET PUBLIC PHOTO URL
+
+    const {
+      data: publicUrlData
+    } =
+      supabaseClient
+        .storage
+        .from("coldme-photos")
+        .getPublicUrl(filePath);
+
+
+    imageUrl =
+      publicUrlData.publicUrl;
+
+  }
+
+
+  // SAVE POST
+
+  postMessage.textContent =
+    "Saving post...";
+
+
   const { error } =
     await supabaseClient
       .from("posts")
@@ -89,23 +166,29 @@ postForm.addEventListener("submit", async (event) => {
         {
           title: title,
           content: content,
-          type: type
+          type: type,
+          image_url: imageUrl
         }
       ]);
 
 
   if (error) {
 
-    console.error("POST ERROR:", error);
+    console.error(
+      "POST ERROR:",
+      error
+    );
 
     postMessage.textContent =
-      "Unable to publish: " + error.message;
+      "Unable to publish: " +
+      error.message;
 
     return;
   }
 
 
-  // Success
+  // SUCCESS
+
   postMessage.textContent =
     "Published successfully!";
 
@@ -120,8 +203,5 @@ postForm.addEventListener("submit", async (event) => {
 });
 
 
-// ===============================
 // START
-// ===============================
-
 checkLogin();
