@@ -224,5 +224,122 @@ async function loadMemories() {
 // START
 // =========================
 
+// =========================
+// LOAD JOURNAL
+// =========================
+
+async function loadJournal() {
+
+  const container =
+    document.getElementById("journal-container");
+
+  if (!container) {
+    return;
+  }
+
+
+  const { data, error } =
+    await supabaseClient
+      .from("posts")
+      .select("*")
+      .eq("type", "Journal")
+      .order("created_at", {
+        ascending: false
+      });
+
+
+  if (error) {
+
+    console.error(
+      "JOURNAL ERROR:",
+      error
+    );
+
+    container.innerHTML =
+      "<p>Unable to load journal.</p>";
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      "<p>No journal entries yet.</p>";
+
+    return;
+  }
+
+
+  container.innerHTML =
+    data.map(post => {
+
+      const date =
+        new Date(post.created_at);
+
+      const formattedDate =
+        date.toLocaleDateString(
+          "en-US",
+          {
+            month: "2-digit",
+            day: "2-digit",
+            year: "numeric"
+          }
+        );
+
+
+      const paragraphs =
+        post.content
+          .split(/\n\s*\n/)
+          .map(paragraph => `
+            <p>
+              ${paragraph.replace(
+                /\n/g,
+                "<br>"
+              )}
+            </p>
+          `)
+          .join("");
+
+
+      const image =
+        post.image_url
+          ? `
+            <img
+              src="${post.image_url}"
+              alt="${post.title || "COLDME journal photo"}"
+              class="letter-image">
+          `
+          : "";
+
+
+      return `
+        <article class="letter">
+
+          <div class="meta">
+            ${formattedDate} · JOURNAL
+          </div>
+
+          <h3>
+            ${post.title || "Untitled"}
+          </h3>
+
+          ${image}
+
+          ${paragraphs}
+
+        </article>
+      `;
+
+    }).join("");
+
+}
+
+
+// =========================
+// START
+// =========================
+
 loadLetters();
 loadMemories();
+loadJournal();
