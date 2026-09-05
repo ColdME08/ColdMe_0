@@ -10,30 +10,23 @@ const supabaseClient = window.supabase.createClient(
 
 
 // ===============================
-// CHECK LOGIN
+// BUTTONS
 // ===============================
 
-async function checkLogin() {
+document.getElementById("logout-btn").addEventListener("click", async () => {
 
-  const {
-    data: { session },
-    error
-  } = await supabaseClient.auth.getSession();
+  await supabaseClient.auth.signOut();
 
-  if (error) {
-    console.error("SESSION ERROR:", error);
-    return false;
-  }
+  window.location.href = "admin.html";
 
-  if (!session) {
-    window.location.href = "admin.html";
-    return false;
-  }
+});
 
-  console.log("Admin logged in:", session.user.email);
 
-  return true;
-}
+document.getElementById("new-post-btn").addEventListener("click", () => {
+
+  alert("New Post is coming next.");
+
+});
 
 
 // ===============================
@@ -46,69 +39,110 @@ async function loadPosts() {
 
   postsList.innerHTML = "<p>Loading posts...</p>";
 
-  const { data, error } = await supabaseClient
-    .from("posts")
-    .select("*")
-    .order("created_at", {
-      ascending: false
-    });
+  try {
+
+    const result = await supabaseClient
+      .from("posts")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
+
+    console.log("Supabase result:", result);
+
+    if (result.error) {
+
+      console.error("Supabase error:", result.error);
+
+      postsList.innerHTML = `
+        <p>Unable to load posts.</p>
+        <p>${result.error.message}</p>
+      `;
+
+      return;
+    }
+
+    const posts = result.data;
+
+    if (!posts || posts.length === 0) {
+
+      postsList.innerHTML = `
+        <p>No posts yet.</p>
+      `;
+
+      return;
+    }
+
+    postsList.innerHTML = posts.map(post => {
+
+      const date = new Date(post.created_at);
+
+      return `
+        <article class="admin-post">
+
+          <div>
+
+            <p class="admin-post-type">
+              ${post.type || "POST"}
+            </p>
+
+            <h3>
+              ${post.title || "Untitled"}
+            </h3>
+
+            <p class="admin-post-date">
+              ${date.toLocaleDateString()}
+            </p>
+
+          </div>
+
+        </article>
+      `;
+
+    }).join("");
+
+  } catch (error) {
+
+    console.error("Dashboard error:", error);
+
+    postsList.innerHTML = `
+      <p>Dashboard error:</p>
+      <p>${error.message}</p>
+    `;
+
+  }
+
+}
 
 
-  // Show the REAL error
+// ===============================
+// CHECK LOGIN
+// ===============================
+
+async function startDashboard() {
+
+  const { data, error } =
+    await supabaseClient.auth.getSession();
+
+  console.log("Session:", data);
+
   if (error) {
 
-    console.error("POST LOAD ERROR:", error);
-
-    postsList.innerHTML = `
-      <p>Unable to load posts.</p>
-
-      <p style="font-size: 14px; margin-top: 10px;">
-        ${error.message}
-      </p>
-    `;
+    console.error("Session error:", error);
 
     return;
   }
 
+  if (!data.session) {
 
-  console.log("POSTS:", data);
-
-
-  // No posts
-  if (!data || data.length === 0) {
-
-    postsList.innerHTML = `
-      <p>No posts yet.</p>
-    `;
+    window.location.href = "admin.html";
 
     return;
   }
 
+  loadPosts();
 
-  // Display posts
-  postsList.innerHTML = data.map(post => {
-
-    const date = new Date(post.created_at);
-
-    const formattedDate = date.toLocaleDateString(
-      "en-US",
-      {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      }
-    );
+}
 
 
-    return `
-      <article class="admin-post">
-
-        <div>
-
-          <p class="admin-post-type">
-            ${post.type || "POST"}
-          </p>
-
-          <h3>
-            ${post.title || "Untitled"}
-          </h3
+startDashboard();
