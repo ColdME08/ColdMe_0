@@ -20,4 +20,6 @@ async function loadPosts() {
   console.log("COLDME posts:", data);
 }
 
-loadPosts();
+loadPosts().then(() => {
+  alert("COLDME connected to Supabase!");
+});
