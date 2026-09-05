@@ -9,43 +9,72 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-// Check if the admin is logged in
+// ===============================
+// CHECK LOGIN
+// ===============================
+
 async function checkLogin() {
 
-  const { data, error } = await supabaseClient.auth.getSession();
+  const {
+    data: { session },
+    error
+  } = await supabaseClient.auth.getSession();
 
-  if (error || !data.session) {
+  if (error) {
+    console.error("SESSION ERROR:", error);
+    return false;
+  }
+
+  if (!session) {
     window.location.href = "admin.html";
     return false;
   }
+
+  console.log("Admin logged in:", session.user.email);
 
   return true;
 }
 
 
-// Load posts
+// ===============================
+// LOAD POSTS
+// ===============================
+
 async function loadPosts() {
 
   const postsList = document.getElementById("posts-list");
 
+  postsList.innerHTML = "<p>Loading posts...</p>";
+
   const { data, error } = await supabaseClient
     .from("posts")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at", {
+      ascending: false
+    });
 
+
+  // Show the REAL error
   if (error) {
-  console.error("POST LOAD ERROR:", error);
 
-  postsList.innerHTML = `
-    <p>Unable to load posts.</p>
-    <p>${error.message}</p>
-  `;
+    console.error("POST LOAD ERROR:", error);
 
-  return;
-}
+    postsList.innerHTML = `
+      <p>Unable to load posts.</p>
+
+      <p style="font-size: 14px; margin-top: 10px;">
+        ${error.message}
+      </p>
+    `;
+
+    return;
+  }
 
 
-  // No posts yet
+  console.log("POSTS:", data);
+
+
+  // No posts
   if (!data || data.length === 0) {
 
     postsList.innerHTML = `
@@ -82,75 +111,4 @@ async function loadPosts() {
 
           <h3>
             ${post.title || "Untitled"}
-          </h3>
-
-          <p class="admin-post-date">
-            ${formattedDate}
-          </p>
-
-        </div>
-
-        <div class="admin-post-actions">
-
-          <button
-            class="edit-button"
-            data-id="${post.id}">
-            EDIT
-          </button>
-
-          <button
-            class="delete-button"
-            data-id="${post.id}">
-            DELETE
-          </button>
-
-        </div>
-
-      </article>
-    `;
-
-  }).join("");
-
-}
-
-
-// Log out
-async function logout() {
-
-  await supabaseClient.auth.signOut();
-
-  window.location.href = "admin.html";
-
-}
-
-
-// New post button
-document
-  .getElementById("new-post-btn")
-  .addEventListener("click", () => {
-
-    window.location.href = "new-post.html";
-
-  });
-
-
-// Logout button
-document
-  .getElementById("logout-btn")
-  .addEventListener("click", logout);
-
-
-// Start dashboard
-async function startDashboard() {
-
-  const loggedIn = await checkLogin();
-
-  if (!loggedIn) {
-    return;
-  }
-
-  await loadPosts();
-
-}
-
-startDashboard();
+          </h3
