@@ -21,9 +21,7 @@ async function checkLogin() {
   } = await supabaseClient.auth.getSession();
 
   if (error || !session) {
-
     window.location.href = "admin.html";
-
     return false;
   }
 
@@ -100,10 +98,38 @@ async function loadPosts() {
 
         </div>
 
+        <div class="admin-post-actions">
+
+          <button
+            class="edit-button"
+            data-id="${post.id}">
+            EDIT
+          </button>
+
+        </div>
+
       </article>
     `;
 
   }).join("");
+
+
+  // Add EDIT button actions
+  document
+    .querySelectorAll(".edit-button")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const postId =
+          button.getAttribute("data-id");
+
+        window.location.href =
+          "edit-post.html?id=" + postId;
+
+      });
+
+    });
 
 }
 
