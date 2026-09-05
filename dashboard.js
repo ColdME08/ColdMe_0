@@ -34,14 +34,15 @@ async function loadPosts() {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
+  console.error("POST LOAD ERROR:", error);
 
-    postsList.innerHTML = `
-      <p>Unable to load posts.</p>
-    `;
+  postsList.innerHTML = `
+    <p>Unable to load posts.</p>
+    <p>${error.message}</p>
+  `;
 
-    return;
-  }
+  return;
+}
 
 
   // No posts yet
