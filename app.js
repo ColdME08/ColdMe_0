@@ -9,10 +9,6 @@ const supabaseClient = window.supabase.createClient(
 );
 
 
-// ===============================
-// LOAD LETTERS
-// ===============================
-
 async function loadLetters() {
 
   const container =
@@ -35,7 +31,10 @@ async function loadLetters() {
 
   if (error) {
 
-    console.error("LETTER ERROR:", error);
+    console.error(
+      "LETTER ERROR:",
+      error
+    );
 
     container.innerHTML = `
       <p>Unable to load letters.</p>
@@ -61,21 +60,39 @@ async function loadLetters() {
       new Date(post.created_at);
 
     const formattedDate =
-      date.toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric"
-      });
+      date.toLocaleDateString(
+        "en-US",
+        {
+          month: "2-digit",
+          day: "2-digit",
+          year: "numeric"
+        }
+      );
 
 
-    // Convert line breaks into paragraphs
     const paragraphs =
       post.content
         .split(/\n\s*\n/)
         .map(paragraph => `
-          <p>${paragraph.replace(/\n/g, "<br>")}</p>
+          <p>
+            ${paragraph.replace(
+              /\n/g,
+              "<br>"
+            )}
+          </p>
         `)
         .join("");
+
+
+    const image =
+      post.image_url
+        ? `
+          <img
+            src="${post.image_url}"
+            alt="${post.title || "COLDME photo"}"
+            class="letter-image">
+        `
+        : "";
 
 
     return `
@@ -89,6 +106,8 @@ async function loadLetters() {
           ${post.title || "Untitled"}
         </h3>
 
+        ${image}
+
         ${paragraphs}
 
       </article>
@@ -98,9 +117,5 @@ async function loadLetters() {
 
 }
 
-
-// ===============================
-// START
-// ===============================
 
 loadLetters();
