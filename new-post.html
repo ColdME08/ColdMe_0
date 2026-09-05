@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>COLDME — New Post</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main class="admin-page">
+
+    <div class="admin-box">
+
+      <p class="kicker">COLDME / NEW POST</p>
+
+      <h1>Write something.</h1>
+
+      <p class="admin-subtitle">
+        Add something to your letters, memories, or journey.
+      </p>
+
+
+      <form id="post-form">
+
+        <label for="post-type">
+          TYPE
+        </label>
+
+        <select id="post-type" required>
+
+          <option value="">
+            Choose a type
+          </option>
+
+          <option value="Letter">
+            Letter
+          </option>
+
+          <option value="Journal">
+            Journal
+          </option>
+
+          <option value="Memory">
+            Memory
+          </option>
+
+        </select>
+
+
+        <label for="post-title">
+          TITLE
+        </label>
+
+        <input
+          type="text"
+          id="post-title"
+          placeholder="Give it a title"
+          required
+        >
+
+
+        <label for="post-content">
+          CONTENT
+        </label>
+
+        <textarea
+          id="post-content"
+          placeholder="Write what you want to say..."
+          rows="12"
+          required
+        ></textarea>
+
+
+        <button type="submit">
+          PUBLISH
+        </button>
+
+        <button
+          type="button"
+          id="cancel-btn"
+          class="secondary-button">
+          CANCEL
+        </button>
+
+        <p id="post-message"></p>
+
+      </form>
+
+    </div>
+
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="new-post.js"></script>
+
+</body>
+
+</html>
