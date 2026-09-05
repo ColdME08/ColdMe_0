@@ -37,12 +37,8 @@ async function loadLetters() {
 
   console.error("LETTER ERROR:", error);
 
-  container.innerHTML = `
-    <p>Unable to load letters.</p>
-    <p style="font-size: 12px;">
-      ${error.message}
-    </p>
-  `;
+  container.innerHTML =
+    "<p>Unable to load letters.</p>";
 
   return;
 }
