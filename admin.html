@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COLDME — Admin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <main class="admin-page">
+    <div class="admin-box">
+
+      <p class="kicker">COLDME / ADMIN</p>
+
+      <h1>Welcome back.</h1>
+
+      <p class="admin-subtitle">
+        Sign in to manage your letters, memories, and journey.
+      </p>
+
+      <form id="login-form">
+
+        <label for="email">EMAIL</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Your email"
+          required
+        >
+
+        <label for="password">PASSWORD</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Your password"
+          required
+        >
+
+        <button type="submit">LOGIN</button>
+
+        <p id="login-message"></p>
+
+      </form>
+
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin.js"></script>
+
+</body>
+</html>
