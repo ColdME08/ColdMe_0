@@ -110,7 +110,7 @@ postForm.addEventListener("submit", async (event) => {
     const { error: uploadError } =
       await supabaseClient
         .storage
-        .from("coldme-photos")
+        .from("Coldme-photos")
         .upload(
           filePath,
           imageFile,
@@ -143,7 +143,7 @@ postForm.addEventListener("submit", async (event) => {
     } =
       supabaseClient
         .storage
-        .from("coldme-photos")
+        .from("Coldme-photos")
         .getPublicUrl(filePath);
 
 
