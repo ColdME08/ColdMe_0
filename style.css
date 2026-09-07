@@ -161,3 +161,51 @@ footer {
   .thoughts, .about { padding: 70px 0; }
   footer { flex-direction: column; gap: 4px; }
 }
+
+/* =========================
+   JOURNAL ARCHIVE
+   ========================= */
+
+.journal-preview {
+  padding: 30px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.journal-preview h3 {
+  margin: 12px 0 18px;
+}
+
+.journal-more,
+.journal-back {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+}
+
+.journal-more:hover,
+.journal-back:hover {
+  text-decoration: underline;
+}
+
+
+/* FULL JOURNAL */
+
+.journal-full {
+  padding: 30px 0;
+}
+
+.journal-full h3 {
+  margin: 12px 0 30px;
+}
+
+.journal-content {
+  margin-top: 10px;
+}
+
+.journal-back {
+  margin-top: 30px;
+}
