@@ -49,6 +49,9 @@ async function loadLetters() {
     return;
   }
 
+
+  // LETTER LIST
+
   container.innerHTML =
     data.map(post => {
 
@@ -65,31 +68,8 @@ async function loadLetters() {
           }
         );
 
-      const paragraphs =
-        post.content
-          .split(/\n\s*\n/)
-          .map(paragraph => `
-            <p>
-              ${paragraph.replace(
-                /\n/g,
-                "<br>"
-              )}
-            </p>
-          `)
-          .join("");
-
-      const image =
-        post.image_url
-          ? `
-            <img
-              src="${post.image_url}"
-              alt="${post.title || "COLDME photo"}"
-              class="letter-image">
-          `
-          : "";
-
       return `
-        <article class="letter">
+        <article class="letter-preview">
 
           <div class="meta">
             ${formattedDate} · LETTER
@@ -99,14 +79,151 @@ async function loadLetters() {
             ${post.title || "Untitled"}
           </h3>
 
-          ${image}
-
-          ${paragraphs}
+          <button
+            class="letter-more"
+            data-id="${post.id}">
+            SEE MORE →
+          </button>
 
         </article>
       `;
 
     }).join("");
+
+
+  // SEE MORE BUTTONS
+
+  document
+    .querySelectorAll(".letter-more")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const id =
+            button.getAttribute("data-id");
+
+          showLetterEntry(
+            data,
+            id
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+// =========================
+// SHOW LETTER
+// =========================
+
+function showLetterEntry(
+  posts,
+  id
+) {
+
+  const container =
+    document.getElementById("letters-container");
+
+  const post =
+    posts.find(
+      item => String(item.id) === String(id)
+    );
+
+  if (!post) {
+    return;
+  }
+
+
+  const date =
+    new Date(post.created_at);
+
+  const formattedDate =
+    date.toLocaleDateString(
+      "en-US",
+      {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric"
+      }
+    );
+
+
+  const paragraphs =
+    post.content
+      .split(/\n\s*\n/)
+      .map(paragraph => `
+        <p>
+          ${paragraph.replace(
+            /\n/g,
+            "<br>"
+          )}
+        </p>
+      `)
+      .join("");
+
+
+  const image =
+    post.image_url
+      ? `
+        <img
+          src="${post.image_url}"
+          alt="${post.title || "COLDME photo"}"
+          class="letter-image">
+      `
+      : "";
+
+
+  container.innerHTML = `
+
+    <article class="letter-full">
+
+      <div class="meta">
+        ${formattedDate} · LETTER
+      </div>
+
+      <h3>
+        ${post.title || "Untitled"}
+      </h3>
+
+      ${image}
+
+      <div class="letter-content">
+        ${paragraphs}
+      </div>
+
+      <button
+        id="back-to-letters"
+        class="journal-back">
+        ← BACK TO LETTERS
+      </button>
+
+    </article>
+
+  `;
+
+
+  document
+    .getElementById("back-to-letters")
+    .addEventListener(
+      "click",
+      () => {
+
+        loadLetters();
+
+      }
+    );
+
+
+  document
+    .getElementById("letters")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
 
 }
 
@@ -151,6 +268,9 @@ async function loadMemories() {
     return;
   }
 
+
+  // MEMORY LIST
+
   container.innerHTML =
     data.map(post => {
 
@@ -160,29 +280,16 @@ async function loadMemories() {
             <img
               src="${post.image_url}"
               alt="${post.title || "COLDME memory"}"
-              class="memory-image">
+              class="memory-preview-image">
           `
           : "";
 
-      const paragraphs =
-        post.content
-          .split(/\n\s*\n/)
-          .map(paragraph => `
-            <p>
-              ${paragraph.replace(
-                /\n/g,
-                "<br>"
-              )}
-            </p>
-          `)
-          .join("");
-
       return `
-        <article class="memory">
+        <article class="memory-preview">
 
           ${image}
 
-          <div class="memory-content">
+          <div class="memory-preview-content">
 
             <div class="meta">
               MEMORY
@@ -192,7 +299,11 @@ async function loadMemories() {
               ${post.title || "Untitled"}
             </h3>
 
-            ${paragraphs}
+            <button
+              class="memory-more"
+              data-id="${post.id}">
+              SEE MORE →
+            </button>
 
           </div>
 
@@ -200,6 +311,129 @@ async function loadMemories() {
       `;
 
     }).join("");
+
+
+  // SEE MORE BUTTONS
+
+  document
+    .querySelectorAll(".memory-more")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const id =
+            button.getAttribute("data-id");
+
+          showMemoryEntry(
+            data,
+            id
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+// =========================
+// SHOW MEMORY
+// =========================
+
+function showMemoryEntry(
+  posts,
+  id
+) {
+
+  const container =
+    document.getElementById("memories-container");
+
+  const post =
+    posts.find(
+      item => String(item.id) === String(id)
+    );
+
+  if (!post) {
+    return;
+  }
+
+
+  const image =
+    post.image_url
+      ? `
+        <img
+          src="${post.image_url}"
+          alt="${post.title || "COLDME memory"}"
+          class="memory-image">
+      `
+      : "";
+
+
+  const paragraphs =
+    post.content
+      .split(/\n\s*\n/)
+      .map(paragraph => `
+        <p>
+          ${paragraph.replace(
+            /\n/g,
+            "<br>"
+          )}
+        </p>
+      `)
+      .join("");
+
+
+  container.innerHTML = `
+
+    <article class="memory-full">
+
+      ${image}
+
+      <div class="memory-content">
+
+        <div class="meta">
+          MEMORY
+        </div>
+
+        <h3>
+          ${post.title || "Untitled"}
+        </h3>
+
+        ${paragraphs}
+
+        <button
+          id="back-to-memories"
+          class="journal-back">
+          ← BACK TO MEMORIES
+        </button>
+
+      </div>
+
+    </article>
+
+  `;
+
+
+  document
+    .getElementById("back-to-memories")
+    .addEventListener(
+      "click",
+      () => {
+
+        loadMemories();
+
+      }
+    );
+
+
+  document
+    .getElementById("memories")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
 
 }
 
@@ -313,7 +547,7 @@ async function loadJournal() {
 
 
 // =========================
-// SHOW JOURNAL ENTRY
+// SHOW JOURNAL
 // =========================
 
 function showJournalEntry(
@@ -413,8 +647,6 @@ function showJournalEntry(
       }
     );
 
-
-  // Move the page back to the Journal section
 
   document
     .getElementById("journal")
