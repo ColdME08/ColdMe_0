@@ -22,7 +22,6 @@ async function loadLetters() {
     return;
   }
 
-
   const { data, error } =
     await supabaseClient
       .from("posts")
@@ -32,17 +31,15 @@ async function loadLetters() {
         ascending: false
       });
 
-
   if (error) {
 
-  console.error("LETTER ERROR:", error);
+    console.error("LETTER ERROR:", error);
 
-  container.innerHTML =
-    "<p>Unable to load letters.</p>";
+    container.innerHTML =
+      "<p>Unable to load letters.</p>";
 
-  return;
-}
-
+    return;
+  }
 
   if (!data || data.length === 0) {
 
@@ -51,7 +48,6 @@ async function loadLetters() {
 
     return;
   }
-
 
   container.innerHTML =
     data.map(post => {
@@ -69,7 +65,6 @@ async function loadLetters() {
           }
         );
 
-
       const paragraphs =
         post.content
           .split(/\n\s*\n/)
@@ -83,7 +78,6 @@ async function loadLetters() {
           `)
           .join("");
 
-
       const image =
         post.image_url
           ? `
@@ -93,7 +87,6 @@ async function loadLetters() {
               class="letter-image">
           `
           : "";
-
 
       return `
         <article class="letter">
@@ -131,7 +124,6 @@ async function loadMemories() {
     return;
   }
 
-
   const { data, error } =
     await supabaseClient
       .from("posts")
@@ -141,20 +133,15 @@ async function loadMemories() {
         ascending: false
       });
 
-
   if (error) {
 
-    console.error(
-      "MEMORY ERROR:",
-      error
-    );
+    console.error("MEMORY ERROR:", error);
 
     container.innerHTML =
       "<p>Unable to load memories.</p>";
 
     return;
   }
-
 
   if (!data || data.length === 0) {
 
@@ -163,7 +150,6 @@ async function loadMemories() {
 
     return;
   }
-
 
   container.innerHTML =
     data.map(post => {
@@ -178,7 +164,6 @@ async function loadMemories() {
           `
           : "";
 
-
       const paragraphs =
         post.content
           .split(/\n\s*\n/)
@@ -191,7 +176,6 @@ async function loadMemories() {
             </p>
           `)
           .join("");
-
 
       return `
         <article class="memory">
@@ -221,10 +205,6 @@ async function loadMemories() {
 
 
 // =========================
-// START
-// =========================
-
-// =========================
 // LOAD JOURNAL
 // =========================
 
@@ -237,7 +217,6 @@ async function loadJournal() {
     return;
   }
 
-
   const { data, error } =
     await supabaseClient
       .from("posts")
@@ -247,20 +226,15 @@ async function loadJournal() {
         ascending: false
       });
 
-
   if (error) {
 
-    console.error(
-      "JOURNAL ERROR:",
-      error
-    );
+    console.error("JOURNAL ERROR:", error);
 
     container.innerHTML =
       "<p>Unable to load journal.</p>";
 
     return;
   }
-
 
   if (!data || data.length === 0) {
 
@@ -270,6 +244,8 @@ async function loadJournal() {
     return;
   }
 
+
+  // JOURNAL LIST
 
   container.innerHTML =
     data.map(post => {
@@ -287,34 +263,8 @@ async function loadJournal() {
           }
         );
 
-
-      const paragraphs =
-        post.content
-          .split(/\n\s*\n/)
-          .map(paragraph => `
-            <p>
-              ${paragraph.replace(
-                /\n/g,
-                "<br>"
-              )}
-            </p>
-          `)
-          .join("");
-
-
-      const image =
-        post.image_url
-          ? `
-            <img
-              src="${post.image_url}"
-              alt="${post.title || "COLDME journal photo"}"
-              class="letter-image">
-          `
-          : "";
-
-
       return `
-        <article class="letter">
+        <article class="journal-preview">
 
           <div class="meta">
             ${formattedDate} · JOURNAL
@@ -324,14 +274,153 @@ async function loadJournal() {
             ${post.title || "Untitled"}
           </h3>
 
-          ${image}
-
-          ${paragraphs}
+          <button
+            class="journal-more"
+            data-id="${post.id}">
+            SEE MORE →
+          </button>
 
         </article>
       `;
 
     }).join("");
+
+
+  // SEE MORE BUTTONS
+
+  document
+    .querySelectorAll(".journal-more")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const id =
+            button.getAttribute("data-id");
+
+          showJournalEntry(
+            data,
+            id
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+// =========================
+// SHOW JOURNAL ENTRY
+// =========================
+
+function showJournalEntry(
+  posts,
+  id
+) {
+
+  const container =
+    document.getElementById("journal-container");
+
+  const post =
+    posts.find(
+      item => String(item.id) === String(id)
+    );
+
+  if (!post) {
+    return;
+  }
+
+
+  const date =
+    new Date(post.created_at);
+
+  const formattedDate =
+    date.toLocaleDateString(
+      "en-US",
+      {
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric"
+      }
+    );
+
+
+  const paragraphs =
+    post.content
+      .split(/\n\s*\n/)
+      .map(paragraph => `
+        <p>
+          ${paragraph.replace(
+            /\n/g,
+            "<br>"
+          )}
+        </p>
+      `)
+      .join("");
+
+
+  const image =
+    post.image_url
+      ? `
+        <img
+          src="${post.image_url}"
+          alt="${post.title || "COLDME journal photo"}"
+          class="letter-image">
+      `
+      : "";
+
+
+  container.innerHTML = `
+
+    <article class="journal-full">
+
+      <div class="meta">
+        ${formattedDate} · JOURNAL
+      </div>
+
+      <h3>
+        ${post.title || "Untitled"}
+      </h3>
+
+      ${image}
+
+      <div class="journal-content">
+        ${paragraphs}
+      </div>
+
+      <button
+        id="back-to-journal"
+        class="journal-back">
+        ← BACK TO JOURNAL
+      </button>
+
+    </article>
+
+  `;
+
+
+  document
+    .getElementById("back-to-journal")
+    .addEventListener(
+      "click",
+      () => {
+
+        loadJournal();
+
+      }
+    );
+
+
+  // Move the page back to the Journal section
+
+  document
+    .getElementById("journal")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
 
 }
 
