@@ -290,3 +290,19 @@ footer {
 .journal-back {
   margin-top: 30px;
 }
+/* Make Letters, Journal, and Memories bigger */
+
+.letter h3,
+.journal-preview h3,
+.journal-full h3,
+.memory-preview h3,
+.memory-full h3 {
+  font-size: 1.5rem;
+}
+
+.letter p,
+.journal-content p,
+.memory-content p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
